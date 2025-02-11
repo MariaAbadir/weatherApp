@@ -4,12 +4,8 @@ pipeline {
         DOCKER_IMAGE_NAME = 'mariaabadir/weather-app'  // Docker image name
         DOCKERHUB_CREDENTIALS = 'dockerhub'           // Docker Hub credentials ID in Jenkins
         GITHUB_CREDENTIALS = 'github'                 // GitHub credentials ID in Jenkins
-        ANSIBLE_PLAYBOOK_PATH = '/home/maria/weatherApp/ansible/playbook.yml'  // Path to your Ansible playbook
-        INVENTORY_FILE = '/home/maria/weatherApp/ansible/inventory'  // Path to your inventory file
-        VAGRANT_SSH_KEY_M01 = credentials('ansible_m01')  // First Vagrant machine SSH key
-        VAGRANT_SSH_KEY_M02 = credentials('ansible_m02')  // Second Vagrant machine SSH key
-        M01_IP = '192.168.56.14'  // IP address of the first Vagrant machine
-        M02_IP = '192.168.56.15'  // IP address of the second Vagrant machine
+        ANSIBLE_PLAYBOOK_PATH = 'ansible/playbook.yml'  // Path to your Ansible playbook
+        INVENTORY_FILE = 'ansible/inventory'  // Path to your inventory file
     }
 
     stages {
