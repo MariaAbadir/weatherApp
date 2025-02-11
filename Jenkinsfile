@@ -46,12 +46,13 @@ pipeline {
          stage('Run Ansible Playbook') {
             steps {
                 script {
-                    // Retrieve both SSH keys
-                    withCredentials([
-                        file(credentialsId: VAGRANT_SSH_KEY_M01, variable: 'SSH_KEY_M01'),
-                        file(credentialsId: VAGRANT_SSH_KEY_M02, variable: 'SSH_KEY_M02')
-                    ]) {
-                        sh "ansible-playbook -i ${INVENTORY_FILE} ${ANSIBLE_PLAYBOOK_PATH}"
+                    // Run Ansible playbook for the first machine
+                    withCredentials([file(credentialsId: 'ansible_m01', variable: 'SSH_KEY_M01')]) {
+                        sh "ansible-playbook -i ${INVENTORY_FILE} --private-key=${SSH_KEY_M01} ${ANSIBLE_PLAYBOOK_PATH}"
+                    }
+                    // Run Ansible playbook for the second machine
+                    withCredentials([file(credentialsId: 'ansible_m02', variable: 'SSH_KEY_M02')]) {
+                        sh "ansible-playbook -i ${INVENTORY_FILE} --private-key=${SSH_KEY_M02} ${ANSIBLE_PLAYBOOK_PATH}"
                     }
                 }
             }
