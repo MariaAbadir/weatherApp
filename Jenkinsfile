@@ -5,6 +5,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'dockerhub'           // Docker Hub credentials ID in Jenkins
         GITHUB_CREDENTIALS = 'github'                 // GitHub credentials ID in Jenkins
         ANSIBLE_PLAYBOOK_PATH = '/home/maria/weatherApp/ansible/playbook.yml'  // Path to your Ansible playbook
+        INVENTORY_FILE = '/home/maria/weatherApp/ansible/inventory'  // Path to your inventory file
         VAGRANT_SSH_KEY_M01 = credentials('ansible_m01')  // First Vagrant machine SSH key
         VAGRANT_SSH_KEY_M02 = credentials('ansible_m02')  // Second Vagrant machine SSH key
         M01_IP = '192.168.56.14'  // IP address of the first Vagrant machine
@@ -45,18 +46,12 @@ pipeline {
          stage('Run Ansible Playbook') {
             steps {
                 script {
-                    // Run the Ansible playbook to install Docker on the Vagrant machines and deploy the image
-                    withCredentials([file(credentialsId: 'ansible-ssh-private-key-m01', variable: 'SSH_KEY_M01')]) {
-                        sh """
-                            ansible-playbook -i ${M01_IP}, --private-key ${SSH_KEY_M01} ${ANSIBLE_PLAYBOOK_PATH}
-                        """
-                    }
-
-                    // Run the playbook for the second machine
-                    withCredentials([file(credentialsId: 'ansible-ssh-private-key-m02', variable: 'SSH_KEY_M02')]) {
-                        sh """
-                            ansible-playbook -i ${M02_IP}, --private-key ${SSH_KEY_M02} ${ANSIBLE_PLAYBOOK_PATH}
-                        """
+                    // Retrieve both SSH keys
+                    withCredentials([
+                        file(credentialsId: VAGRANT_SSH_KEY_M01, variable: 'SSH_KEY_M01'),
+                        file(credentialsId: VAGRANT_SSH_KEY_M02, variable: 'SSH_KEY_M02')
+                    ]) {
+                        sh "ansible-playbook -i ${INVENTORY_FILE} ${ANSIBLE_PLAYBOOK_PATH}"
                     }
                 }
             }
