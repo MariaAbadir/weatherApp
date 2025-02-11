@@ -46,13 +46,15 @@ pipeline {
          stage('Run Ansible Playbook') {
             steps {
                 script {
-                    // Run Ansible playbook for the first machine
-                    withCredentials([file(credentialsId: 'ansible_m01', variable: 'SSH_KEY_M01')]) {
-                        sh "ansible-playbook -i ${INVENTORY_FILE} --private-key=${SSH_KEY_M01} ${ANSIBLE_PLAYBOOK_PATH}"
-                    }
-                    // Run Ansible playbook for the second machine
-                    withCredentials([file(credentialsId: 'ansible_m02', variable: 'SSH_KEY_M02')]) {
-                        sh "ansible-playbook -i ${INVENTORY_FILE} --private-key=${SSH_KEY_M02} ${ANSIBLE_PLAYBOOK_PATH}"
+                    // Retrieve both SSH keys
+                    withCredentials([
+                        sshUserPrivateKey(credentialsId: 'ansible_m01', keyFileVariable: 'SSH_KEY_M01', usernameVariable: 'SSH_USER_M01'),
+                        sshUserPrivateKey(credentialsId: 'ansible_m02', keyFileVariable: 'SSH_KEY_M02', usernameVariable: 'SSH_USER_M02')
+                    ]) {
+                       sh """
+                           ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no -i ${SSH_KEY_M01} -i ${SSH_KEY_M02}" \
+                           ansible-playbook -i ${INVENTORY_FILE} ${ANSIBLE_PLAYBOOK_PATH}
+                       """
                     }
                 }
             }
