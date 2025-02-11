@@ -1,0 +1,45 @@
+---
+- name: Pull Docker Image and Install on Vagrant Machines
+  hosts: centos
+  become: yes
+  tasks:
+
+    - name: Install required dependencies for Docker
+      yum:
+        name:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+        state: present
+
+    - name: Add Docker repository
+      yum_repository:
+        name: docker-ce-stable
+        description: Docker CE Stable Repo
+        baseurl: https://download.docker.com/linux/centos/7/x86_64/stable/
+        gpgcheck: 1
+        enabled: 1
+        gpgkey: https://download.docker.com/linux/centos/gpg
+
+    - name: Install Docker
+      yum:
+        name: docker-ce
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull Docker image from Docker Hub
+      docker_image:
+        name: mariaabadir/weather-app
+        source: pull
+
+    - name: Run Docker container from the pulled image
+      docker_container:
+        name: weather-app-container
+        image: mariaabadir/weather-app
+        state: started
+        restart_policy: always

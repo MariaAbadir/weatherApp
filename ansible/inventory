@@ -1,0 +1,4 @@
+[centos]
+192.168.56.15 ansible_user=vagrant ansible_private_key_file=/home/maria/ansible/private_key1
+192.168.56.14 ansible_user=vagrant ansible_private_key_file=/home/maria/ansible/private_key2
+
