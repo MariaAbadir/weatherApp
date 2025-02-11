@@ -31,11 +31,11 @@ pipeline {
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    // Log in to Docker Hub using the stored secret token
-                    withCredentials([string(credentialsId: DOCKERHUB_CREDENTIALS, variable: 'DOCKER_PASSWORD')]) {
-                        // Use the secret token to log in to Docker Hub
+                    // Log in to Docker Hub using stored credentials
+                    withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
                     }
+
                     // Push the Docker image to Docker Hub
                     sh 'docker push ${DOCKER_IMAGE_NAME}:latest'
                 }
