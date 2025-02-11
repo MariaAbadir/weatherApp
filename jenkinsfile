@@ -14,15 +14,8 @@ pipeline {
     stages {
 
         stage('Pull Code from GitHub') {
-            steps {
-                script {
-                    if (fileExists("./.git")) {
-                        sh 'git pull'
-                    } else {
-                        sh 'git clone -b main https://github.com/MariaAbadir/weatherApp .'
-                    }
-                    checkout scm
-                }
+            steps {                 
+                git credentialsId: 'github', url: 'https://github.com/MariaAbadir/weatherApp.git', branch: 'main'            
             }
         }
 
