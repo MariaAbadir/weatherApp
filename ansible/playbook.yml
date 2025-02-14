@@ -38,8 +38,4 @@
         source: pull
 
     - name: Run Docker container from the pulled image
-      docker_container:
-        name: weather-app-container
-        image: mariaabadir/weather-app
-        state: started
-        restart_policy: always
+      command: docker run -d --name weather-app -p 5000:5000 mariaabadir/weather-app
